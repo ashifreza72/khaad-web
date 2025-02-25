@@ -1,7 +1,7 @@
 'use client';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FiShoppingCart, FiStar } from 'react-icons/fi';
 import ProductDetailModal from './ProductDetailModal';
 
@@ -16,6 +16,7 @@ interface Product {
   category: string;
   tag?: string;
   sizes: { size: string; price: string }[];
+  orderCount: number; 
 }
 
 const products: Product[] = [
@@ -30,6 +31,7 @@ const products: Product[] = [
     category: 'Fertilizers',
     tag: 'Best Seller',
     sizes: [],
+    orderCount: 1250, 
   },
   {
     id: 2,
@@ -48,6 +50,7 @@ const products: Product[] = [
       { size: '500ml', price: '₹600' },
       { size: '1L', price: '₹1200' },
     ],
+    orderCount: 850,
   },
   {
     id: 3,
@@ -60,12 +63,19 @@ const products: Product[] = [
     category: 'Seeds',
     tag: 'Top Rated',
     sizes: [],
+    orderCount: 980,
   },
 ];
 
-const PopularProducts = () => {
+const BestSellers = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [bestSellers, setBestSellers] = useState<Product[]>([]);
+
+  useEffect(() => {
+    const sortedProducts = [...products].sort((a, b) => b.orderCount - a.orderCount);
+    setBestSellers(sortedProducts.slice(0, 3));
+  }, []);
 
   const openModal = (product: Product) => {
     setSelectedProduct(product);
@@ -78,12 +88,12 @@ const PopularProducts = () => {
   };
 
   return (
-    <section className='py-10 bg-gray-50'>
+    <section className='py-6 bg-gray-50'>
       <div className='container mx-auto px-4'>
         <div className='flex justify-between items-center mb-8'>
           <div>
-            <h2 className='text-2xl md:text-3xl font-bold'>Popular Products</h2>
-            <p className='text-gray-600 mt-1'>Most loved by our customers</p>
+            <h2 className='text-2xl md:text-3xl font-bold'>Best Sellers</h2>
+            <p className='text-gray-600 mt-1'>Most ordered by our customers</p>
           </div>
           <Link
             href='/products'
@@ -94,7 +104,7 @@ const PopularProducts = () => {
         </div>
 
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-          {products.map((product) => (
+          {bestSellers.map((product) => (
             <div key={product.id} onClick={() => openModal(product)}>
               <ProductCard product={product} />
             </div>
@@ -102,69 +112,60 @@ const PopularProducts = () => {
         </div>
       </div>
 
-      {/* Product Detail Modal */}
-      <ProductDetailModal
-        product={selectedProduct}
-        isOpen={isModalOpen}
-        onClose={closeModal}
-      />
+      {isModalOpen && selectedProduct && (
+        <ProductDetailModal
+          product={selectedProduct}
+          isOpen={isModalOpen}
+          onClose={closeModal}
+        />
+      )}
     </section>
   );
 };
 
-const ProductCard = ({ product }: { product: Product }) => {
+interface ProductCardProps {
+  product: Product;
+}
+
+const ProductCard = ({ product }: ProductCardProps) => {
   return (
-    <div className='bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden group'>
-      <div className='flex md:flex-row flex-col h-full'>
-        {/* Image Section */}
-        <div className='relative md:w-2/5 h-48 md:h-auto'>
+    <div className='bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-duration-300 cursor-pointer'>
+      <div className='relative'>
+        <div className='relative h-64 w-full'>
           <Image
             src={product.image}
             alt={product.title}
             fill
-            className='object-cover group-hover:scale-105 transition-transform duration-300'
+            className='object-cover'
           />
-          {product.tag && (
-            <span className='absolute top-2 left-2 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded'>
-              {product.tag}
-            </span>
-          )}
         </div>
-
-        {/* Content Section */}
-        <div className='p-4 md:w-3/5 flex flex-col justify-between'>
-          <div>
-            <span className='text-sm text-gray-500'>{product.category}</span>
-            <h3 className='font-semibold text-lg mt-1'>{product.title}</h3>
-
-            {/* Rating */}
-            <div className='flex items-center mt-2'>
-              <div className='flex items-center text-yellow-400'>
-                <FiStar className='w-4 h-4 fill-current' />
-                <span className='ml-1 text-sm font-medium'>
-                  {product.rating}
-                </span>
-              </div>
-              <span className='text-xs text-gray-500 ml-2'>
-                ({product.reviews} reviews)
-              </span>
-            </div>
-
-            {/* Price */}
-            <div className='flex items-center mt-2'>
-              <span className='text-lg font-bold text-gray-900'>
-                {product.price}
-              </span>
-              <span className='text-sm text-gray-500 line-through ml-2'>
-                {product.originalPrice}
-              </span>
-            </div>
+        {product.tag && (
+          <span className='absolute top-2 right-2 bg-primary text-white px-2 py-1 rounded text-sm'>
+            {product.tag}
+          </span>
+        )}
+        <span className='absolute bottom-2 right-2 bg-white/90 text-primary px-2 py-1 rounded text-sm font-medium'>
+          {product.orderCount.toLocaleString()} Orders
+        </span>
+      </div>
+      <div className='p-4'>
+        <h3 className='font-semibold text-lg mb-1'>{product.title}</h3>
+        <div className='flex items-center gap-2 mb-2'>
+          <div className='flex items-center gap-1'>
+            <FiStar className='text-yellow-400 fill-current' />
+            <span className='text-sm font-medium'>{product.rating}</span>
           </div>
-
-          {/* Button */}
-          <button className='mt-4 w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg flex items-center justify-center gap-2 transition duration-300'>
-            <FiShoppingCart className='w-5 h-5' />
-            <span>Add to Cart</span>
+          <span className='text-sm text-gray-500'>({product.reviews} reviews)</span>
+        </div>
+        <div className='flex items-center justify-between'>
+          <div>
+            <span className='text-lg font-bold text-primary'>{product.price}</span>
+            <span className='text-sm text-gray-500 line-through ml-2'>
+              {product.originalPrice}
+            </span>
+          </div>
+          <button className='p-2 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors'>
+            <FiShoppingCart size={20} />
           </button>
         </div>
       </div>
@@ -172,4 +173,4 @@ const ProductCard = ({ product }: { product: Product }) => {
   );
 };
 
-export default PopularProducts;
+export default BestSellers;

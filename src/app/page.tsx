@@ -1,7 +1,7 @@
 import HeroSection from '@/components/HeroSection';
 import CategorySection from '@/components/CategorySection';
 import FeaturedProducts from '@/components/FeaturedProducts';
-import PopularProducts from '@/components/PopularProducts';
+import BestSellers from '@/components/BestSellers';
 import SeasonalOffers from '@/components/SeasonalOffers';
 import FarmingTips from '@/components/FarmingTips';
 import ContactSection from '@/components/ContactSection';
@@ -17,7 +17,7 @@ export default function Home() {
           <CategorySection />
         </div>
       </div>
-      <PopularProducts />
+      <BestSellers />
       <FeaturedProducts />
       <SeasonalOffers />
       <FarmingTips />
