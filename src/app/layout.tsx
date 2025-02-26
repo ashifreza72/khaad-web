@@ -5,6 +5,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import PopupModal from '@/components/PopupModal';
 import { CartProvider } from '@/context/CartContext';
+import { Toaster } from 'react-hot-toast';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -36,6 +37,7 @@ export default function RootLayout({
           <main className='pt-16'>{children}</main>
           <Footer />
           <PopupModal />
+          <Toaster />
         </body>
       </html>
     </CartProvider>

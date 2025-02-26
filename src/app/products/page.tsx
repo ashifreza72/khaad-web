@@ -1,16 +1,26 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { products } from '@/data/products';
 import ProductDetailModal from '@/components/ProductDetailModal';
 import ProductCard from '@/components/ProductCard';
 
 const ProductsPage = () => {
+  const searchParams = useSearchParams();
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [filteredProducts, setFilteredProducts] = useState(products);
 
   const categories = ['All', ...new Set(products.map((product) => product.category))];
+
+  useEffect(() => {
+    const categoryParam = searchParams.get('category');
+    if (categoryParam) {
+      const formattedCategory = categoryParam.charAt(0).toUpperCase() + categoryParam.slice(1);
+      handleCategoryClick(formattedCategory);
+    }
+  }, [searchParams]);
 
   const handleCategoryClick = (category: string) => {
     setSelectedCategory(category);

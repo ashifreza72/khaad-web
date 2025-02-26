@@ -20,7 +20,11 @@ export const products: Product[] = [
     discount: '25%',
     category: 'Fertilizers',
     description: 'Complete nutrition for your crops',
-    sizes: [{ size: '1 Bg', price: '₹300' }],
+    sizes: [
+      { size: '1 kg', price: '₹300' },
+      { size: '5 kg', price: '₹750' },
+      { size: '10 kg', price: '₹1400' }
+    ],
   },
   {
     id: 2,
@@ -48,7 +52,11 @@ export const products: Product[] = [
     discount: '25%',
     category: 'Seeds',
     description: 'High-quality seeds for better yield',
-    sizes: [],
+    sizes: [
+      { size: '100g', price: '₹299' },
+      { size: '250g', price: '₹599' },
+      { size: '500g', price: '₹999' }
+    ],
   },
   {
     id: 4,
@@ -59,7 +67,11 @@ export const products: Product[] = [
     discount: '20%',
     category: 'Fertilizers',
     description: 'High-quality urea fertilizer for better crop yield',
-    sizes: [],
+    sizes: [
+      { size: '1 kg', price: '₹550' },
+      { size: '5 kg', price: '₹2500' },
+      { size: '10 kg', price: '₹4500' }
+    ],
   },
 ];
 
