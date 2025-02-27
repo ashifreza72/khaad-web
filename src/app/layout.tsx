@@ -5,6 +5,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import PopupModal from '@/components/PopupModal';
 import { CartProvider } from '@/context/CartContext';
+import { UIProvider } from '@/context/UIContext';
 import { Toaster } from 'react-hot-toast';
 
 const geistSans = Geist({
@@ -29,17 +30,19 @@ export default function RootLayout({
 }) {
   return (
     <CartProvider>
-      <html lang='en'>
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
-          <Navbar />
-          <main className='pt-16'>{children}</main>
-          <Footer />
-          <PopupModal />
-          <Toaster />
-        </body>
-      </html>
+      <UIProvider>
+        <html lang='en'>
+          <body
+            className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          >
+            <Navbar />
+            <main className='pt-16'>{children}</main>
+            <Footer />
+            <PopupModal />
+            <Toaster />
+          </body>
+        </html>
+      </UIProvider>
     </CartProvider>
   );
 }

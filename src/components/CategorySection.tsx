@@ -11,8 +11,8 @@ const categories = [
     highlight: "PREMIUM FERTILIZERS",
     description: "High-quality fertilizers for better yield",
     link: "/products?category=fertilizers",
-    bgColor: "bg-orange-50",
-    textColor: "text-orange-600",
+    bgColor: "bg-green-200",
+    textColor: "text-green-800",
     image: "/images/urea.png",
     categoryKey: "Fertilizers",
   },
@@ -22,8 +22,8 @@ const categories = [
     highlight: "ORGANIC PESTICIDES",
     description: "Effective pest control solutions",
     link: "/products?category=pesticides",
-    bgColor: "bg-blue-50",
-    textColor: "text-blue-600",
+    bgColor: "bg-yellow-200",
+    textColor: "text-yellow-800",
     image: "/images/pesticide.png",
     categoryKey: "Pesticides",
   },
@@ -33,8 +33,8 @@ const categories = [
     highlight: "PREMIUM QUALITY SEEDS",
     description: "For better farming",
     link: "/products?category=seeds",
-    bgColor: "bg-green-50",
-    textColor: "text-green-600",
+    bgColor: "bg-blue-200",
+    textColor: "text-blue-800",
     image: "/images/seed.png",
     categoryKey: "Seeds",
   },
@@ -62,7 +62,7 @@ const CategorySection = () => {
                     <h3 className="text-lg sm:text-xl md:text-2xl font-bold mt-2">
                       {category.title}
                     </h3>
-                    <p className="text-gray-600 text-sm mt-2">{category.description}</p>
+                    <p className="text-gray-700 text-sm mt-2">{category.description}</p>
                     <div className="mt-4">
                       <span className={`inline-flex items-center text-sm font-semibold ${category.textColor}`}>
                         {filteredProducts.length} Products

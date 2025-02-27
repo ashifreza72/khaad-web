@@ -14,7 +14,7 @@ interface CartItem {
 interface CartContextType {
   cartItems: CartItem[];
   addToCart: (item: CartItem) => void;
-  removeFromCart: (id: number) => void;
+  removeFromCart: (id: number, size: string) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -40,8 +40,10 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
     });
   };
 
-  const removeFromCart = (id: number) => {
-    setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
+  const removeFromCart = (id: number, size: string) => {
+    setCartItems((prevItems) =>
+      prevItems.filter((item) => !(item.id === id && item.size === size))
+    );
   };
 
   return (
@@ -53,7 +55,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
 
 export const useCart = () => {
   const context = useContext(CartContext);
-  if (!context) {
+  if (context === undefined) {
     throw new Error('useCart must be used within a CartProvider');
   }
   return context;

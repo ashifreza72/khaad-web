@@ -1,19 +1,21 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { FiX, FiPhone, FiMessageCircle } from 'react-icons/fi';
+import { useUI } from '@/context/UIContext';
 
 const PopupModal = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { isCartOpen } = useUI();
 
   useEffect(() => {
     // Initial delay before first popup
     const initialTimer = setTimeout(() => {
-      setIsOpen(false);
+      setIsOpen(true);
     }, 100000); // Show first time after 10 seconds
 
     // Set up interval for recurring popups
     const intervalTimer = setInterval(() => {
-      setIsOpen(false);
+      setIsOpen(true);
     }, 100000); // Show every 10 seconds
 
     // Cleanup function
@@ -23,7 +25,7 @@ const PopupModal = () => {
     };
   }, []); // Empty dependency array means this runs once on mount
 
-  if (!isOpen) return null;
+  if (!isOpen || isCartOpen) return null;
 
   return (
     <div className='fixed inset-0 z-50 flex items-center justify-center px-4'>

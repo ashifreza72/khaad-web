@@ -26,14 +26,14 @@ const Navbar = () => {
   };
 
   return (
-    <nav className='bg-white shadow-md fixed w-full top-0 z-50'>
+    <nav className='bg-gradient-to-r from-green-600 to-green-500 shadow-lg fixed w-full top-0 z-50'>
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
         <div className='flex items-center justify-between h-16'>
           {/* Logo */}
           <div className='flex-shrink-0'>
             <Link href='/' className='flex items-center'>
-              <span className='ml-2 text-xl font-bold text-gray-800'>
-                Khaad bhandar
+              <span className='ml-2 text-xl font-bold text-yellow-300'>
+                Khaad Bhandar
               </span>
             </Link>
           </div>
@@ -43,12 +43,12 @@ const Navbar = () => {
             <div className='relative'>
               <input
                 type='text'
-                placeholder='Search...'
+                placeholder='Search products...'
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className='w-full px-6 py-2 text-sm md:text-base lg:text-lg rounded-full border border-gray-300 focus:outline-none focus:border-blue-500'
               />
-              <FiSearch className='absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 lg:w-6 lg:h-6' />
+              <FiSearch className='absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-600 w-5 h-5 lg:w-6 lg:h-6' />
             </div>
           </div>
 
@@ -56,14 +56,14 @@ const Navbar = () => {
           <div className='flex items-center space-x-6'>
             {/* Mobile Search Icon */}
             <button
-              className='md:hidden text-gray-600 hover:text-gray-900'
+              className='md:hidden text-yellow-300 hover:text-white transition duration-300'
               onClick={toggleSearch}
             >
               <FiSearch className='w-6 h-6' />
             </button>
 
             {/* Cart Icon */}
-            <button onClick={toggleCart} className='relative'>
+            <button onClick={toggleCart} className='relative text-yellow-300 hover:text-white transition duration-300'>
               <FiShoppingCart className='w-6 h-6' />
               {cartItems.length > 0 && (
                 <span className='absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full px-1'>
@@ -77,7 +77,7 @@ const Navbar = () => {
               href='https://wa.me/1234567890'
               target='_blank'
               rel='noopener noreferrer'
-              className='text-gray-600 hover:text-green-500 transition duration-300'
+              className='text-yellow-300 hover:text-green-200 transition duration-300'
             >
               <FiMessageCircle className='w-6 h-6' />
             </a>

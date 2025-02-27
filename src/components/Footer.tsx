@@ -1,7 +1,12 @@
+'use client';
+
 import Link from 'next/link';
 import { FiPhone, FiMessageCircle, FiMail, FiMapPin } from 'react-icons/fi';
+import { useUI } from '@/context/UIContext';
 
 const Footer = () => {
+  const { isCartOpen } = useUI();
+
   return (
     <footer className='bg-gray-900 text-gray-300'>
       <div className='container mx-auto px-4 py-12'>
@@ -119,15 +124,17 @@ const Footer = () => {
               Connect With Us
             </h3>
             <div className='flex flex-col gap-4'>
-              <a
-                href='https://wa.me/1234567890'
-                target='_blank'
-                rel='noopener noreferrer'
-                className='bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg flex items-center gap-2 transition-colors'
-              >
-                <FiMessageCircle className='h-5 w-5' />
-                <span>Chat on WhatsApp</span>
-              </a>
+              {!isCartOpen && (
+                <a
+                  href='https://wa.me/1234567890'
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg flex items-center gap-2 transition-colors'
+                >
+                  <FiMessageCircle className='h-5 w-5' />
+                  <span>Chat on WhatsApp</span>
+                </a>
+              )}
               <a
                 href='tel:+1234567890'
                 className='bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg flex items-center gap-2 transition-colors'
@@ -142,7 +149,7 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className='mt-12 pt-8 border-t border-gray-800 text-center text-sm'>
           <p>
-            © {new Date().getFullYear()} Khaad Bhandar. All rights reserved.
+            {new Date().getFullYear()} Khaad Bhandar. All rights reserved.
           </p>
         </div>
       </div>
