@@ -17,7 +17,7 @@ const BillModal = ({ isOpen, onClose }: BillModalProps) => {
     year: 'numeric'
   });
 
-  const [showForm, setShowForm] = useState(false);
+  const [showForm, setShowForm] = useState(true);
   const [formData, setFormData] = useState({
     name: '',
     address: '',
@@ -46,11 +46,29 @@ const BillModal = ({ isOpen, onClose }: BillModalProps) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = () => {
-    const { name, address, phone, pincode } = formData;
-    const message = `Bill Details:\nName: ${name}\nAddress: ${address}\nPhone: ${phone}\nPincode: ${pincode}\nGrand Total: ₹${calculateTotal()}`;
-    const whatsappUrl = `https://wa.me/91${phone}?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
+  const handlePrint = () => {
+    setShowForm(false);
+  };
+
+  const handleOrderNow = () => {
+    const whatsappNumber = '91XXXXXXXXXX'; // Replace with your WhatsApp number (without +)
+    const message = encodeURIComponent(
+      `Order Details:
+      Name: ${formData.name}
+      Address: ${formData.address}
+      Phone: ${formData.phone}
+      Pincode: ${formData.pincode}
+      --------------------------
+      Items Ordered:\n` +
+      cartItems.map((item, index) => 
+        `${index + 1}. ${item.title} - ${item.size} x ${item.quantity} = ₹${(parseFloat(item.price.replace('₹', '')) * item.quantity).toFixed(2)}`
+      ).join("\n") +
+      `\n--------------------------
+      Grand Total: ₹${calculateTotal()}`
+    );
+  
+    const whatsappURL = `https://wa.me/${whatsappNumber}?text=${message}`;
+    window.open(whatsappURL, '_blank');
   };
 
   if (!isOpen) return null;
@@ -59,13 +77,12 @@ const BillModal = ({ isOpen, onClose }: BillModalProps) => {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-2 sm:px-0">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4 my-auto max-h-[90vh] flex flex-col overflow-hidden">
         <div className="relative p-4 border rounded-lg shadow-md bg-gradient-to-r from-green-600 to-green-700 text-white">
-          <button onClick={onClose} className="absolute top-2 right-2 text-white hover:text-yellow-200">
-            <FiX size={20} />
+          <button onClick={onClose} className="absolute top-2 right-2 text-red-500 hover:text-red-400">
+            <FiX size={25} />
           </button>
           <h2 className="font-bold text-lg">Cash/Credit Memo</h2>
           <p className="text-sm text-yellow-100">Invoice No.: 409</p>
           <p className="text-sm text-yellow-100">Dated: {currentDate}</p>
-          <p className="text-sm mt-2 text-yellow-100">Billed to: Cash</p>
         </div>
 
         <div className="p-3 sm:p-6 overflow-y-auto flex-grow bg-gradient-to-b from-green-50 to-white">
@@ -75,6 +92,7 @@ const BillModal = ({ isOpen, onClose }: BillModalProps) => {
                 <tr className="border-b border-green-200">
                   <th className="text-left py-2 text-green-800">S.N.</th>
                   <th className="text-left py-2 text-green-800">Item Name</th>
+                  <th className="text-left py-2 text-green-800">Size</th>
                   <th className="text-left py-2 text-green-800">Qty.</th>
                   <th className="text-right py-2 text-green-800">Price</th>
                   <th className="text-right py-2 text-green-800">Amount (₹)</th>
@@ -85,6 +103,7 @@ const BillModal = ({ isOpen, onClose }: BillModalProps) => {
                   <tr key={item.id} className="border-b border-green-100 hover:bg-green-50">
                     <td className="py-2">{index + 1}.</td>
                     <td className="py-2 font-medium text-green-900">{item.title}</td>
+                    <td className="py-2">{item.size}</td>
                     <td className="py-2">{item.quantity}</td>
                     <td className="text-right py-2">₹{item.price.replace('₹', '')}</td>
                     <td className="text-right py-2 font-medium text-green-800">₹{(parseFloat(item.price.replace('₹', '')) * item.quantity).toFixed(2)}</td>
@@ -96,32 +115,30 @@ const BillModal = ({ isOpen, onClose }: BillModalProps) => {
           <div className="mt-4 sm:mt-6 flex justify-end border-t border-green-200 pt-3">
             <p className="font-bold text-base sm:text-lg text-green-800">Grand Total ₹{calculateTotal()}</p>
           </div>
+          <div className="mt-4 text-xs text-gray-600">
+            <p><strong>Customer Details:</strong></p>
+            <p>Name: {formData.name || 'N/A'}</p>
+            <p>Address: {formData.address || 'N/A'}</p>
+            <p>Phone: {formData.phone || 'N/A'}</p>
+            <p>Pincode: {formData.pincode || 'N/A'}</p>
+            <p><strong>Terms & Conditions:</strong></p>
+            <p>1. No Refund Policy</p>
+            <p>2. Goods once sold cannot be returned</p>
+          </div>
         </div>
 
         <div className="p-3 sm:p-6 border-t border-green-100 flex-shrink-0 bg-green-50">
-          {!showForm ? (
-            <button
-              onClick={() => setShowForm(true)}
-              className="w-full bg-yellow-500 text-white py-2 rounded-lg hover:bg-yellow-600 text-sm font-medium shadow-md hover:shadow-lg transition-all duration-200"
-            >
-              Print Bill
-            </button>
-          ) : (
+          {showForm ? (
             <div className="p-4 border border-green-200 rounded-lg bg-white">
               <h3 className="font-bold text-lg mb-2 text-green-800">Enter Your Details</h3>
-              <input type="text" name="name" placeholder="Name" value={formData.name} onChange={handleChange} 
-                className="w-full p-2 border border-green-200 rounded mb-2 focus:ring-2 focus:ring-green-500 focus:border-transparent" />
-              <input type="text" name="address" placeholder="Address" value={formData.address} onChange={handleChange} 
-                className="w-full p-2 border border-green-200 rounded mb-2 focus:ring-2 focus:ring-green-500 focus:border-transparent" />
-              <input type="text" name="phone" placeholder="Phone No." value={formData.phone} onChange={handleChange} 
-                className="w-full p-2 border border-green-200 rounded mb-2 focus:ring-2 focus:ring-green-500 focus:border-transparent" />
-              <input type="text" name="pincode" placeholder="Pincode" value={formData.pincode} onChange={handleChange} 
-                className="w-full p-2 border border-green-200 rounded mb-2 focus:ring-2 focus:ring-green-500 focus:border-transparent" />
-              <button onClick={handleSubmit} 
-                className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 text-sm font-medium shadow-md hover:shadow-lg transition-all duration-200">
-                Send to WhatsApp
-              </button>
+              <input type="text" name="name" placeholder="Name" value={formData.name} onChange={handleChange} className="w-full p-2 border border-green-200 rounded mb-2" />
+              <input type="text" name="address" placeholder="Address" value={formData.address} onChange={handleChange} className="w-full p-2 border border-green-200 rounded mb-2" />
+              <input type="text" name="phone" placeholder="Phone No." value={formData.phone} onChange={handleChange} className="w-full p-2 border border-green-200 rounded mb-2" />
+              <input type="text" name="pincode" placeholder="Pincode" value={formData.pincode} onChange={handleChange} className="w-full p-2 border border-green-200 rounded mb-2" />
+              <button onClick={handlePrint} className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 text-sm font-medium shadow-md hover:shadow-lg transition-all duration-200">Submit</button>
             </div>
+          ) : (
+            <button onClick={handleOrderNow} className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 text-sm font-medium shadow-md hover:shadow-lg transition-all duration-200">Order Now</button>
           )}
         </div>
       </div>

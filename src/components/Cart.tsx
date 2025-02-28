@@ -3,7 +3,7 @@
 import { useCart } from '@/context/CartContext';
 import { useUI } from '@/context/UIContext';
 import Image from 'next/image';
-import { FiMinus, FiPlus, FiTrash2 } from 'react-icons/fi';
+import { FiMinus, FiPlus, FiTrash2, FiX } from 'react-icons/fi';
 import { useEffect, useState } from 'react';
 import BillModal from './BillModal';
 
@@ -55,10 +55,11 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ isOpen, onClose }) => {
           <h2 className="text-xl sm:text-2xl font-bold text-white">Your Cart</h2>
           <button 
             onClick={onClose} 
-            className="text-white hover:text-yellow-200 p-2"
+            className="text-red-500 hover:text-red-400 p-2"
             aria-label="Close cart"
           >
-            ✕
+            <FiX size={25} />
+            
           </button>
         </div>
 
