@@ -10,6 +10,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'images.tv9hindi.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+      },
     ],
   }
 }

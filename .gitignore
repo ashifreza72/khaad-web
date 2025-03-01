@@ -1,41 +1,103 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# dependencies
-/node_modules
-/.pnp
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
+# Dependencies
+**/node_modules
+**/.pnp
+**/.pnp.js
+**/.yarn/*
+!**/.yarn/patches
+!**/.yarn/plugins
+!**/.yarn/releases
+!**/.yarn/versions
 
-# testing
-/coverage
+# Testing
+**/coverage
+**/cypress/videos
+**/cypress/screenshots
+**/.nyc_output
 
-# next.js
-/.next/
-/out/
+# Next.js (Frontend)
+/frontend/.next/
+/frontend/out/
+/frontend/build
+/frontend/.next
+/frontend/next-env.d.ts
 
-# production
-/build
+# Production builds
+**/build
+**/dist
+**/.env.production
 
-# misc
+# Backend specific
+/backend/uploads/*
+!/backend/uploads/.gitkeep
+/backend/logs
+/backend/dist
+/backend/build
+
+# Environment files
+**/.env
+**/.env.local
+**/.env.development.local
+**/.env.test.local
+**/.env.production.local
+**/.env.development
+**/.env.test
+**/.env.production
+
+# Debug logs
+**/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
+**/.pnpm-debug.log*
+**/debug.log
+**/logs
+**/*.log
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# IDE - JetBrains
+.idea/
+**/*.iml
+**/*.iws
+**/.idea_modules/
+
+# System Files
 .DS_Store
-*.pem
+Thumbs.db
+Desktop.ini
+**/.DS_Store?
+**/._*
+**/.Spotlight-V100
+**/.Trashes
+**/ehthumbs.db
 
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
+# Cache and temporary files
+**/.cache
+**/.temp
+**/tmp
+**/.eslintcache
+**/.stylelintcache
+**/.parcel-cache
 
-# env files (can opt-in for committing if needed)
-.env*
+# TypeScript
+**/*.tsbuildinfo
+**/tsconfig.tsbuildinfo
 
-# vercel
-.vercel
+# Vercel
+**/.vercel
 
-# typescript
-*.tsbuildinfo
-next-env.d.ts
+# Package manager specific
+**/.npm
+**/package-lock.json
+**/yarn.lock
+**/.yarn-integrity
+
+# Optional
+**/*.swp
+**/*.swo

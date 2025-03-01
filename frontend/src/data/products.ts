@@ -25,13 +25,13 @@ export const products: Product[] = [
       { size: '5 kg', price: '₹750' },
       { size: '10 kg', price: '₹1400' }
     ],
-  },
+  },  
   {
     id: 2,
     title: 'Organic Pesticide',
     price: '₹450',
     originalPrice: '₹599',
-    image: '/images/8ea4ef5b-6958-4e17-8249-e7f99ff2fddd.png',
+    image: '/images/pesticide.png',
     discount: '20%',
     category: 'Pesticides',
     description: 'Natural pest control solution',

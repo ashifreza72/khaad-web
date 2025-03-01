@@ -6,6 +6,7 @@ import ProductDetailModal from '@/components/ProductDetailModal';
 import ProductCard from '@/components/ProductCard';
 
 const ProductList = () => {
+  
   const searchParams = useSearchParams();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
