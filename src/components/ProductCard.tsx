@@ -1,22 +1,14 @@
 'use client';
 import Image from 'next/image';
 import { FiShoppingCart } from 'react-icons/fi';
+import { Product as DataProduct } from '@/data/products';
 
 interface Size {
   size: string;
   price: string;
 }
 
-interface Product {
-  id: number;
-  title: string;
-  originalPrice: string;
-  image: string;
-  description: string;
-  sizes?: Size[];
-  category: string;
-  discount?: string;
-}
+type Product = DataProduct;
 
 interface ProductCardProps {
   product: Product;

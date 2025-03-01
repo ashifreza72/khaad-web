@@ -1,16 +1,16 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { products } from '@/data/products';
+import { products, Product } from '@/data/products';
 import ProductDetailModal from '@/components/ProductDetailModal';
 import ProductCard from '@/components/ProductCard';
 
 const ProductsPage = () => {
   const searchParams = useSearchParams();
-  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const [filteredProducts, setFilteredProducts] = useState(products);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>(products);
 
   const categories = ['All', ...new Set(products.map((product) => product.category))];
 
@@ -34,7 +34,7 @@ const ProductsPage = () => {
     }
   };
 
-  const handleProductClick = (product) => {
+  const handleProductClick = (product: Product) => {
     setSelectedProduct(product);
     setIsModalOpen(true);
   };

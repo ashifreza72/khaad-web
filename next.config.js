@@ -11,14 +11,7 @@ const nextConfig = {
         hostname: 'images.tv9hindi.com',
       },
     ],
-  },
-  webpack: (config) => {
-    config.module.rules.push({
-      test: /\.css$/i,
-      use: ['style-loader', 'css-loader'],
-    });
-    return config;
-  },
-};
+  }
+}
 
-module.exports = nextConfig;
+module.exports = nextConfig

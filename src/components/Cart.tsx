@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { FiMinus, FiPlus, FiTrash2, FiX } from 'react-icons/fi';
 import { useEffect, useState } from 'react';
 import BillModal from './BillModal';
+import { CartItem } from '@/types/cart';
 
 interface CartSidebarProps {
   isOpen: boolean;
@@ -28,7 +29,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({ isOpen, onClose }) => {
     }, 0).toFixed(2);
   };
 
-  const handleQuantityChange = (item: any, change: number) => {
+  const handleQuantityChange = (item: CartItem, change: number) => {
     if (change > 0) {
       addToCart({ ...item, quantity: 1 });
     } else if (item.quantity > 1) {

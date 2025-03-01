@@ -1,15 +1,9 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+import type { NextConfig } from 'next'
+
+const config: NextConfig = {
   images: {
     domains: ['images.unsplash.com'], // Add any image domains you'll use
-  },
-  webpack: (config) => {
-    config.module.rules.push({
-      test: /\.css$/i,
-      use: ['style-loader', 'css-loader'],
-    });
-    return config;
-  },
-};
+  }
+}
 
-module.exports = nextConfig;
+export default config
