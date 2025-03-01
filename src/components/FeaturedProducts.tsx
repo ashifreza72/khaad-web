@@ -1,15 +1,15 @@
 'use client';
 import { useState } from 'react';
-import { getFeaturedProducts } from '@/data/products';
+import { getFeaturedProducts, Product } from '@/data/products';
 import ProductDetailModal from './ProductDetailModal';
 import ProductCard from './ProductCard';
 
 const FeaturedProducts = () => {
-  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const featuredProducts = getFeaturedProducts();
 
-  const handleProductClick = (product) => {
+  const handleProductClick = (product: Product) => {
     setSelectedProduct(product);
     setIsModalOpen(true);
   };

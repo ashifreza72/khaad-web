@@ -3,11 +3,6 @@ import Image from 'next/image';
 import { FiShoppingCart } from 'react-icons/fi';
 import { Product as DataProduct } from '@/data/products';
 
-interface Size {
-  size: string;
-  price: string;
-}
-
 type Product = DataProduct;
 
 interface ProductCardProps {

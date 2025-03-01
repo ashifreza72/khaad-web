@@ -22,6 +22,7 @@ interface Product {
   tag?: string;
   sizes: Size[];
   orderCount: number;
+  description: string;
 }
 
 interface ProductCardProps {
@@ -42,6 +43,7 @@ const products: Product[] = [
     tag: 'Best Seller',
     sizes: [],
     orderCount: 1250,
+    description: 'High-quality DAP fertilizer for better crop yield',
   },
   {
     id: 2,
@@ -61,6 +63,7 @@ const products: Product[] = [
       { size: '1L', price: '₹1200' },
     ],
     orderCount: 850,
+    description: 'Organic pesticide safe for crops and environment',
   },
   {
     id: 3,
@@ -74,6 +77,7 @@ const products: Product[] = [
     tag: 'Top Rated',
     sizes: [],
     orderCount: 980,
+    description: 'High-yield hybrid wheat seeds for better farming',
   },
 ];
 
@@ -92,10 +96,14 @@ const BestSellers: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const closeModal = () => {
+  // const closeModal = () => {
+  //   setIsModalOpen(false);
+  //   setSelectedProduct(null);
+  // };
+  const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedProduct(null);
-  };
+  }
 
   return (
     <section className="py-6 bg-green-50">
@@ -128,7 +136,7 @@ const BestSellers: React.FC = () => {
         <ProductDetailModal
           product={selectedProduct}
           isOpen={isModalOpen}
-          onClose={closeModal}
+          onClose={handleCloseModal}
         />
       )}
     </section>

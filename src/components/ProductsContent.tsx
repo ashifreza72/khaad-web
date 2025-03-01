@@ -1,11 +1,11 @@
 'use client';
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { products, Product } from '@/data/products';
-import ProductDetailModal from '@/components/ProductDetailModal';
-import ProductCard from '@/components/ProductCard';
+import ProductDetailModal from './ProductDetailModal';
+import ProductCard from './ProductCard';
 
-const ProductList = () => {
+const ProductsContent = () => {
   const searchParams = useSearchParams();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -90,12 +90,4 @@ const ProductList = () => {
   );
 };
 
-const ProductsPage = () => {
-  return (
-    <Suspense fallback={<div className="text-center py-8">Loading products...</div>}>
-      <ProductList />
-    </Suspense>
-  );
-};
-
-export default ProductsPage;
+export default ProductsContent;

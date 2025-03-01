@@ -16,7 +16,7 @@ interface Product {
   title: string;
   originalPrice: string;
   image: string;
-  description: string;
+  description?: string;
   sizes?: Size[];
   category: string;
 }
@@ -119,7 +119,9 @@ const ProductDetailModal = ({
               />
             </div>
 
-            <p className='text-gray-600 mb-2'>{product.description}</p>
+            {product.description && (
+              <p className='text-gray-600 mb-2'>{product.description}</p>
+            )}
 
             {/* Price Display */}
             <div className='flex justify-center items-center mb-2'>

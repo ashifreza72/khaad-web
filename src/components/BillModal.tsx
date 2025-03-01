@@ -1,16 +1,24 @@
 'use client';
 
-import { useCart } from '@/context/CartContext';
 import { FiX } from 'react-icons/fi';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+
+interface CartItem {
+  id: number;
+  title: string;
+  size: string;
+  quantity: number;
+  price: string;
+}
 
 interface BillModalProps {
   isOpen: boolean;
   onClose: () => void;
+  cartItems: CartItem[];
+  total: string;
 }
 
-const BillModal = ({ isOpen, onClose }: BillModalProps) => {
-  const { cartItems } = useCart();
+const BillModal = ({ isOpen, onClose, cartItems, total }: BillModalProps) => {
   const currentDate = new Date().toLocaleDateString('en-GB', {
     day: '2-digit',
     month: '2-digit',
@@ -24,23 +32,6 @@ const BillModal = ({ isOpen, onClose }: BillModalProps) => {
     phone: '',
     pincode: ''
   });
-
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'auto';
-    }
-    return () => {
-      document.body.style.overflow = 'auto';
-    };
-  }, [isOpen]);
-
-  const calculateTotal = () => {
-    return cartItems.reduce((total, item) => {
-      return total + (parseFloat(item.price.replace('₹', '')) * item.quantity);
-    }, 0).toFixed(2);
-  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -64,7 +55,7 @@ const BillModal = ({ isOpen, onClose }: BillModalProps) => {
         `${index + 1}. ${item.title} - ${item.size} x ${item.quantity} = ₹${(parseFloat(item.price.replace('₹', '')) * item.quantity).toFixed(2)}`
       ).join("\n") +
       `\n--------------------------
-      Grand Total: ₹${calculateTotal()}`
+      Grand Total: ₹${total}`
     );
   
     const whatsappURL = `https://wa.me/${whatsappNumber}?text=${message}`;
@@ -113,7 +104,7 @@ const BillModal = ({ isOpen, onClose }: BillModalProps) => {
             </table>
           </div>
           <div className="mt-4 sm:mt-6 flex justify-end border-t border-green-200 pt-3">
-            <p className="font-bold text-base sm:text-lg text-green-800">Grand Total ₹{calculateTotal()}</p>
+            <p className="font-bold text-base sm:text-lg text-green-800">Grand Total ₹{total}</p>
           </div>
           <div className="mt-4 text-xs text-gray-600">
             <p><strong>Customer Details:</strong></p>
