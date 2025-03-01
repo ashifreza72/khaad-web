@@ -31,8 +31,9 @@ export default function RootLayout({
   return (
     <CartProvider>
       <UIProvider>
-        <html lang='en'>
+        <html suppressHydrationWarning lang='en'>
           <body
+          suppressHydrationWarning
             className={`${geistSans.variable} ${geistMono.variable} antialiased`}
           >
             <Navbar />
