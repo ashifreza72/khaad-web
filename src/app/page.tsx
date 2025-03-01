@@ -4,7 +4,7 @@ import FeaturedProducts from '@/components/FeaturedProducts';
 import BestSellers from '@/components/BestSellers';
 import SeasonalOffers from '@/components/SeasonalOffers';
 import FarmingTips from '@/components/FarmingTips';
-import ContactSection from '@/components/ContactSection';
+ 
 
 export default function Home() {
   return (
@@ -21,7 +21,7 @@ export default function Home() {
       <FeaturedProducts />
       <SeasonalOffers />
       <FarmingTips />
-      <ContactSection />
+       
     </main>
   );
 }
