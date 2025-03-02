@@ -157,8 +157,16 @@ exports.updateProduct = async (req, res) => {
                 req.body.sizes = typeof req.body.sizes === 'string' ? JSON.parse(req.body.sizes) : req.body.sizes;
             } catch (error) {
                 console.error('Error parsing sizes:', error);
+                return res.status(400).json({
+                    success: false,
+                    message: 'Invalid sizes format'
+                });
             }
         }
+
+        // Remove fields that shouldn't be updated
+        delete req.body.createdBy;
+        delete req.body.createdAt;
 
         product = await Product.findByIdAndUpdate(req.params.id, req.body, {
             new: true,
