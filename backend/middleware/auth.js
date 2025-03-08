@@ -5,26 +5,54 @@ exports.isAuthenticatedAdmin = async (req, res, next) => {
     try {
         let token;
 
+        // Check for token in Authorization header
         if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
             token = req.headers.authorization.split(' ')[1];
+        } 
+        // Also check for token in cookies as fallback
+        else if (req.cookies && req.cookies.token) {
+            token = req.cookies.token;
         }
 
         if (!token) {
             return res.status(401).json({
                 success: false,
-                message: 'Login first to access this resource'
+                message: 'Authentication required. Please login to access this resource'
             });
         }
 
         // Verify token
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.admin = await Admin.findById(decoded.id);
+        
+        // Check if admin exists
+        const admin = await Admin.findById(decoded.id);
+        if (!admin) {
+            return res.status(401).json({
+                success: false,
+                message: 'User not found. Please login again'
+            });
+        }
 
+        req.admin = admin;
         next();
     } catch (error) {
+        console.error('Auth middleware error:', error);
+        
+        if (error.name === 'JsonWebTokenError') {
+            return res.status(401).json({
+                success: false,
+                message: 'Invalid token. Please login again'
+            });
+        } else if (error.name === 'TokenExpiredError') {
+            return res.status(401).json({
+                success: false,
+                message: 'Token expired. Please login again'
+            });
+        }
+        
         res.status(401).json({
             success: false,
-            message: 'Invalid token'
+            message: 'Authentication failed. Please login again'
         });
     }
 };

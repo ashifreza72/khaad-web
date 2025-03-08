@@ -25,103 +25,106 @@ interface Product {
   featured?: boolean;
 }
 
-export default function FeaturedProducts() {
-  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+export default function PopularProducts() {
+  const [popularProducts, setPopularProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { addToCart } = useCart();
 
   useEffect(() => {
-    const fetchFeaturedProducts = async () => {
+    const fetchPopularProducts = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('http://localhost:5000/api/products');
-        console.log('Featured products response:', response.data); // Debug log
+        const response = await axios.get(
+          'http://localhost:5000/api/products/popular'
+        );
+
         if (response.data?.success) {
-          // Filter featured products or take the first 4 products
-          const featured =
-            response.data.products.filter((p: Product) => p.featured) ||
-            response.data.products.slice(0, 4);
-          setFeaturedProducts(featured);
+          setPopularProducts(response.data.products);
         } else {
-          setError('Failed to fetch products');
+          // Fallback: fetch all products and take the first 4
+          const allProductsResponse = await axios.get(
+            'http://localhost:5000/api/products'
+          );
+          if (allProductsResponse.data?.success) {
+            // Take the first 4 products as popular products
+            const popular = allProductsResponse.data.products.slice(0, 4);
+            setPopularProducts(popular);
+          } else {
+            throw new Error('Failed to fetch products');
+          }
         }
       } catch (err) {
-        console.error('Error fetching featured products:', err);
+        console.error('Error fetching popular products:', err);
         setError('Error loading products');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchFeaturedProducts();
+    fetchPopularProducts();
   }, []);
 
   const handleAddToCart = (product: Product) => {
+    // Get the default size or first available size
+    const defaultSize =
+      product.sizes && product.sizes.length > 0
+        ? product.sizes[0]
+        : { size: 'default', price: product.price };
+
     addToCart({
-      productId: product._id, // Change from 'id' to 'productId' to match your CartItem type
+      id: product._id,
+      productId: product._id,
       title: product.title,
-      price: product.price,
+      price: defaultSize.price,
       quantity: 1,
       image: product.image.url,
-      size: product.sizes[0]?.size || 'default',
+      size: defaultSize.size,
     });
   };
 
-  if (loading) {
-    return (
-      <div className='py-16 flex justify-center items-center w-full'>
-        <div className='animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500'></div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className='py-16 flex justify-center items-center w-full text-red-500'>
-        {error}
-      </div>
-    );
-  }
+  // ... existing loading and error handling ...
 
   // Fallback for empty products
-  if (featuredProducts.length === 0) {
+  if (popularProducts.length === 0) {
     return (
       <section className='py-12 bg-gradient-to-b from-white to-green-50 w-full'>
         <div className='container mx-auto px-4'>
           <div className='text-center mb-12'>
             <h2 className='text-3xl md:text-4xl font-bold mb-3 text-gray-800'>
-              Featured Products
+              Popular Products
             </h2>
             <div className='w-24 h-1 bg-gradient-to-r from-green-500 to-green-600 mx-auto mb-4'></div>
             <p className='text-gray-600 max-w-2xl mx-auto'>
-              Our featured products will be available soon.
+              Our popular products will be available soon.
             </p>
           </div>
         </div>
       </section>
     );
   }
+
   return (
     <section className='py-12 bg-gradient-to-b from-white to-green-50'>
       <div className='container mx-auto px-4'>
         <div className='text-center mb-12'>
           <h2 className='text-3xl md:text-4xl font-bold mb-3 text-gray-800'>
-            Featured Products
+            Popular Products
           </h2>
           <div className='w-24 h-1 bg-gradient-to-r from-green-500 to-green-600 mx-auto mb-4'></div>
           <p className='text-gray-600 max-w-2xl mx-auto'>
-            Discover our handpicked selection of premium agricultural products
-            designed to maximize your farm's productivity.
+            Our best-selling agricultural products that farmers trust for
+            consistent results.
           </p>
         </div>
 
         <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8'>
-          {featuredProducts.map((product) => (
+          {popularProducts.map((product) => (
             <div
               key={product._id}
               className='bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col h-full'
             >
+              {/* Product image section */}
               <div className='relative h-48 sm:h-56 w-full overflow-hidden group'>
                 <Image
                   src={product.image?.url || '/placeholder-product.jpg'}
@@ -164,6 +167,7 @@ export default function FeaturedProducts() {
                 </div>
               </div>
 
+              {/* Product details section */}
               <div className='p-5 flex-grow flex flex-col'>
                 <h3 className='text-lg font-bold mb-2 text-gray-800 line-clamp-1'>
                   {product.title}
@@ -207,7 +211,7 @@ export default function FeaturedProducts() {
                   >
                     <path d='M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z' />
                   </svg>
-                  Add to Cart
+                  {product.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
                 </button>
               </div>
             </div>

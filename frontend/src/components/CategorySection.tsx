@@ -1,95 +1,156 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import Link from "next/link";
-import { getProductsByCategory } from "@/data/products";
+import { useState, useEffect } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import axios from 'axios';
 
-const categories = [
+interface Category {
+  id: string;
+  name: string;
+  description: string;
+  image: string;
+  slug: string;
+}
+
+// Sample categories in case API fails
+const fallbackCategories: Category[] = [
   {
-    id: 1,
-    title: "Khaad (Fertilizers)",
-    highlight: "PREMIUM FERTILIZERS",
-    description: "High-quality fertilizers for better yield",
-    link: "/products?category=fertilizers",
-    bgColor: "bg-green-200",
-    textColor: "text-green-800",
-    image: "/images/urea.png",
-    categoryKey: "Fertilizers",
+    id: '1',
+    name: 'Fertilizers',
+    description: 'Boost your crop yield with our premium fertilizers',
+    image: '/images/urea.png',
+    slug: 'fertilizers',
   },
   {
-    id: 2,
-    title: "Pesticides (Keetnashak)",
-    highlight: "ORGANIC PESTICIDES",
-    description: "Effective pest control solutions",
-    link: "/products?category=pesticides",
-    bgColor: "bg-yellow-200",
-    textColor: "text-yellow-800",
-    image: "/images/pesticide.png",
-    categoryKey: "Pesticides",
+    id: '2',
+    name: 'Seeds',
+    description: 'High-quality seeds for better germination and growth',
+    image: '/images/seed.png',
+    slug: 'seeds',
   },
   {
-    id: 3,
-    title: "Beej (Seeds)",
-    highlight: "PREMIUM QUALITY SEEDS",
-    description: "For better farming",
-    link: "/products?category=seeds",
-    bgColor: "bg-blue-200",
-    textColor: "text-blue-800",
-    image: "/images/seed.png",
-    categoryKey: "Seeds",
+    id: '3',
+    name: 'Pesticides',
+    description: 'Protect your crops from harmful pests and diseases',
+    image: '/images/pesticide.png',
+    slug: 'pesticides',
   },
+  // {
+  //   id: '4',
+  //   name: 'Tools',
+  //   description: 'Essential farming tools for efficient agriculture',
+  //   image: '/images/tools.jpg',
+  //   slug: 'tools',
+  // },
 ];
 
-const CategorySection = () => {
+function CategorySection() {
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(
+          'http://localhost:5000/api/categories'
+        );
+
+        if (response.data?.success) {
+          setCategories(response.data.categories);
+        } else {
+          // Use fallback categories if API doesn't return expected format
+          setCategories(fallbackCategories);
+        }
+      } catch (err) {
+        console.error('Error fetching categories:', err);
+        // Use fallback categories if API fails
+        setCategories(fallbackCategories);
+        setError('Could not load categories from server');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  if (loading) {
+    return (
+      <section className='py-12 bg-gray-50'>
+        <div className='container mx-auto px-4'>
+          <div className='flex justify-center'>
+            <div className='animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500'></div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
-    <section className="py-6 px-4 md:px-8">
-      <div className="overflow-x-auto scrollbar-hide snap-x snap-mandatory flex md:grid md:grid-cols-3 gap-4">
-        {categories.map((category) => {
-          // Get the filtered products for each category
-          const filteredProducts = getProductsByCategory(category.categoryKey) || [];
+    <section className='py-16 bg-gradient-to-b from-white to-green-50'>
+      <div className='container mx-auto px-4'>
+        <div className='text-center mb-12'>
+          <h2 className='text-3xl md:text-4xl font-bold mb-3 text-gray-800'>
+            Shop by Category
+          </h2>
+          <div className='w-24 h-1 bg-gradient-to-r from-green-500 to-green-600 mx-auto mb-4'></div>
+          <p className='text-gray-600 max-w-2xl mx-auto'>
+            Browse our wide range of agricultural products designed to help your
+            farm thrive
+          </p>
+        </div>
 
-          return (
-            <Link key={category.id} href={category.link} className="snap-center">
-              <div
-                className={`relative flex-shrink-0 min-w-[100vw] sm:min-w-[90%] md:w-full h-[260px] rounded-2xl overflow-hidden ${category.bgColor} transition-transform hover:scale-[1.02] duration-300 shadow-md`}
-              >
-                <div className="flex h-full">
-                  {/* Text Content */}
-                  <div className="flex-1 p-4 sm:p-6 md:p-8 flex flex-col justify-center">
-                    <span className={`text-xs font-bold tracking-wider ${category.textColor}`}>
-                      {category.highlight}
-                    </span>
-                    <h3 className="text-lg sm:text-xl md:text-2xl font-bold mt-2">
-                      {category.title}
-                    </h3>
-                    <p className="text-gray-700 text-sm mt-2">{category.description}</p>
-                    <div className="mt-4">
-                      <span className={`inline-flex items-center text-sm font-semibold ${category.textColor}`}>
-                        {filteredProducts.length} Products
-                        <svg className="w-4 h-4 ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                      </span>
-                    </div>
+        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8'>
+          {categories.map((category) => (
+            <Link
+              href={`/products?category=${category.slug}`}
+              key={category.id}
+              className='group'
+            >
+              <div className='bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl group-hover:transform group-hover:-translate-y-1'>
+                <div className='relative h-48 w-full overflow-hidden'>
+                  <Image
+                    src={category.image || '/placeholder-category.jpg'}
+                    alt={category.name}
+                    fill
+                    className='object-cover group-hover:scale-110 transition-transform duration-500'
+                    sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw'
+                  />
+                  <div className='absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-80'></div>
+                  <div className='absolute bottom-0 left-0 right-0 p-4 text-white'>
+                    <h3 className='text-xl font-bold mb-1'>{category.name}</h3>
+                    <p className='text-sm text-gray-200 line-clamp-2'>
+                      {category.description}
+                    </p>
                   </div>
-
-                  {/* Image */}
-                  <div className="relative w-24 md:w-32 h-full">
-                    <Image
-                      src={category.image}
-                      alt={`${category.title} - ${category.description}`}
-                      fill
-                      className="object-cover"
+                </div>
+                <div className='p-4 flex justify-between items-center'>
+                  <span className='text-green-600 font-medium'>
+                    View Products
+                  </span>
+                  <svg
+                    xmlns='http://www.w3.org/2000/svg'
+                    className='h-5 w-5 text-green-600 transform group-hover:translate-x-1 transition-transform'
+                    viewBox='0 0 20 20'
+                    fill='currentColor'
+                  >
+                    <path
+                      fillRule='evenodd'
+                      d='M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z'
+                      clipRule='evenodd'
                     />
-                  </div>
+                  </svg>
                 </div>
               </div>
             </Link>
-          );
-        })}
+          ))}
+        </div>
       </div>
     </section>
   );
-};
+}
 
 export default CategorySection;
