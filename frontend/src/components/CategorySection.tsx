@@ -4,6 +4,10 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import axios from 'axios';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import 'swiper/css/pagination';
+import { Pagination } from 'swiper/modules';
 
 interface Category {
   id: string;
@@ -13,7 +17,6 @@ interface Category {
   slug: string;
 }
 
-// Sample categories in case API fails
 const fallbackCategories: Category[] = [
   {
     id: '1',
@@ -36,13 +39,13 @@ const fallbackCategories: Category[] = [
     image: '/images/pesticide.png',
     slug: 'pesticides',
   },
-  // {
-  //   id: '4',
-  //   name: 'Tools',
-  //   description: 'Essential farming tools for efficient agriculture',
-  //   image: '/images/tools.jpg',
-  //   slug: 'tools',
-  // },
+  {
+    id: '4',
+    name: 'Tools',
+    description: 'Essential farming tools for efficient agriculture',
+    image: '/images/regent.jpg',
+    slug: 'tools',
+  },
 ];
 
 function CategorySection() {
@@ -55,18 +58,26 @@ function CategorySection() {
       try {
         setLoading(true);
         const response = await axios.get(
-          'http://localhost:5000/api/categories'
+          'http://localhost:5000/api/products/categories'
         );
 
-        if (response.data?.success) {
-          setCategories(response.data.categories);
+        if (response.data && Array.isArray(response.data.categories)) {
+          const formattedCategories = response.data.categories.map(
+            (cat: string) => ({
+              id: cat.toLowerCase(),
+              name: cat,
+              description: `Browse our ${cat.toLowerCase()} collection`,
+              image: `/images/${cat.toLowerCase()}.png`,
+              slug: cat.toLowerCase(),
+            })
+          );
+          setCategories(formattedCategories);
         } else {
-          // Use fallback categories if API doesn't return expected format
+          console.warn('Unexpected API response:', response.data);
           setCategories(fallbackCategories);
         }
       } catch (err) {
         console.error('Error fetching categories:', err);
-        // Use fallback categories if API fails
         setCategories(fallbackCategories);
         setError('Could not load categories from server');
       } finally {
@@ -79,70 +90,107 @@ function CategorySection() {
 
   if (loading) {
     return (
-      <section className='py-12 bg-gray-50'>
-        <div className='container mx-auto px-4'>
-          <div className='flex justify-center'>
-            <div className='animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500'></div>
-          </div>
-        </div>
-      </section>
+      <div className='flex justify-center items-center h-64'>
+        <div className='animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500'></div>
+      </div>
     );
   }
 
   return (
-    <section className='py-16 bg-gradient-to-b from-white to-green-50'>
+    <section className='py-16 bg-gray-50'>
       <div className='container mx-auto px-4'>
         <div className='text-center mb-12'>
-          <h2 className='text-3xl md:text-4xl font-bold mb-3 text-gray-800'>
+          <h2 className='text-3xl md:text-4xl font-bold text-gray-800'>
             Shop by Category
           </h2>
-          <div className='w-24 h-1 bg-gradient-to-r from-green-500 to-green-600 mx-auto mb-4'></div>
-          <p className='text-gray-600 max-w-2xl mx-auto'>
-            Browse our wide range of agricultural products designed to help your
-            farm thrive
-          </p>
         </div>
 
-        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8'>
+        {/* Swiper for Mobile, Grid for Desktop */}
+        <div className='block lg:hidden'>
+          <Swiper
+            modules={[Pagination]}
+            spaceBetween={20}
+            slidesPerView={1}
+            pagination={{ clickable: true }}
+            autoHeight={true} // 🟢 Apply globally
+            breakpoints={{
+              640: { slidesPerView: 2 },
+              1024: { slidesPerView: 4 },
+            }}
+            className='my-6'
+          >
+            {categories.map((category) => (
+              <SwiperSlide key={category.id}>
+                <Link
+                  href={`/products?category=${category.slug}`}
+                  className='group'
+                >
+                  <div className='bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl flex items-stretch h-full'>
+                    {/* Content on the Left */}
+                    <div className='p-4 flex flex-col justify-between w-2/3'>
+                      <h3 className='text-lg font-bold text-gray-800'>
+                        {category.name}
+                      </h3>
+                      <p className='text-gray-600 text-sm flex-grow'>
+                        {category.description}
+                      </p>
+                      <div>
+                        <span className='text-green-600 font-medium'>
+                          View Products
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Image on the Right */}
+                    <div className='relative w-1/3 h-full'>
+                      <Image
+                        src={category.image || '/placeholder-category.jpg'}
+                        alt={category.name}
+                        width={120}
+                        height={120}
+                        className='object-cover'
+                      />
+                    </div>
+                  </div>
+                </Link>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </div>
+
+        {/* Desktop Grid View */}
+        <div className='hidden lg:grid grid-cols-4 gap-6'>
           {categories.map((category) => (
             <Link
               href={`/products?category=${category.slug}`}
               key={category.id}
               className='group'
             >
-              <div className='bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl group-hover:transform group-hover:-translate-y-1'>
-                <div className='relative h-48 w-full overflow-hidden'>
+              <div className='bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl flex items-stretch h-full'>
+                {/* Content on the Left */}
+                <div className='p-4 flex flex-col justify-between w-2/3'>
+                  <h3 className='text-lg font-bold text-gray-800'>
+                    {category.name}
+                  </h3>
+                  <p className='text-gray-600 text-sm flex-grow'>
+                    {category.description}
+                  </p>
+                  <div>
+                    <span className='text-green-600 font-medium'>
+                      View Products
+                    </span>
+                  </div>
+                </div>
+
+                {/* Image on the Right */}
+                <div className='relative w-1/3 h-full'>
                   <Image
                     src={category.image || '/placeholder-category.jpg'}
                     alt={category.name}
-                    fill
-                    className='object-cover group-hover:scale-110 transition-transform duration-500'
-                    sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw'
+                    width={120}
+                    height={120}
+                    className='object-cover'
                   />
-                  <div className='absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-80'></div>
-                  <div className='absolute bottom-0 left-0 right-0 p-4 text-white'>
-                    <h3 className='text-xl font-bold mb-1'>{category.name}</h3>
-                    <p className='text-sm text-gray-200 line-clamp-2'>
-                      {category.description}
-                    </p>
-                  </div>
-                </div>
-                <div className='p-4 flex justify-between items-center'>
-                  <span className='text-green-600 font-medium'>
-                    View Products
-                  </span>
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    className='h-5 w-5 text-green-600 transform group-hover:translate-x-1 transition-transform'
-                    viewBox='0 0 20 20'
-                    fill='currentColor'
-                  >
-                    <path
-                      fillRule='evenodd'
-                      d='M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z'
-                      clipRule='evenodd'
-                    />
-                  </svg>
                 </div>
               </div>
             </Link>

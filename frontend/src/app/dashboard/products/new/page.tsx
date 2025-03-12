@@ -3,19 +3,19 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
-import { 
-  TextField, 
-  Button, 
-  Box, 
-  Typography, 
-  Container, 
-  Grid, 
-  MenuItem, 
-  IconButton, 
+import {
+  TextField,
+  Button,
+  Box,
+  Typography,
+  Container,
+  Grid,
+  MenuItem,
+  IconButton,
   Paper,
   Alert,
   InputAdornment,
-  Stack
+  Stack,
 } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
@@ -71,7 +71,11 @@ export default function NewProductPage() {
     }
   };
 
-  const handleSizeChange = (index: number, field: keyof Size, value: string) => {
+  const handleSizeChange = (
+    index: number,
+    field: keyof Size,
+    value: string
+  ) => {
     const newSizes = [...formData.sizes];
     newSizes[index] = { ...newSizes[index], [field]: value };
     setFormData({ ...formData, sizes: newSizes });
@@ -106,10 +110,26 @@ export default function NewProductPage() {
         }
       });
 
+      // Improved token retrieval
+      const cookies = document.cookie.split(';');
+      let token = '';
+
+      for (const cookie of cookies) {
+        const [name, value] = cookie.trim().split('=');
+        if (name === 'token') {
+          token = value;
+          break;
+        }
+      }
+
+      if (!token) {
+        throw new Error('Authentication token not found. Please login again.');
+      }
+
       const res = await fetch('http://localhost:5000/api/products/create', {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${document.cookie.split('=')[1]}`,
+          Authorization: `Bearer ${token}`,
         },
         body: formDataToSend,
       });
@@ -129,25 +149,32 @@ export default function NewProductPage() {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h4" component="h1" gutterBottom>
+    <Container maxWidth='lg' sx={{ py: 4 }}>
+      <Typography variant='h4' component='h1' gutterBottom>
         Add New Product
       </Typography>
-      
+
       {error && (
-        <Alert severity="error" sx={{ mb: 3 }}>
+        <Alert severity='error' sx={{ mb: 3 }}>
           {error}
         </Alert>
       )}
 
-      <Paper component="form" onSubmit={handleSubmit} elevation={3} sx={{ p: 4 }}>
+      <Paper
+        component='form'
+        onSubmit={handleSubmit}
+        elevation={3}
+        sx={{ p: 4 }}
+      >
         <Grid container spacing={3}>
           <Grid item xs={12} md={6}>
             <TextField
               fullWidth
-              label="Title"
+              label='Title'
               value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, title: e.target.value })
+              }
               required
               inputProps={{ maxLength: 100 }}
             />
@@ -157,12 +184,14 @@ export default function NewProductPage() {
             <TextField
               select
               fullWidth
-              label="Category"
+              label='Category'
               value={formData.category}
-              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, category: e.target.value })
+              }
               required
             >
-              <MenuItem value="">Select a category</MenuItem>
+              <MenuItem value=''>Select a category</MenuItem>
               {categories.map((category) => (
                 <MenuItem key={category} value={category}>
                   {category}
@@ -171,20 +200,74 @@ export default function NewProductPage() {
             </TextField>
           </Grid>
 
+          <Grid item xs={12}>
+            <Typography variant='h6' gutterBottom>
+              Product Sizes
+            </Typography>
+            {formData.sizes.map((size, index) => (
+              <Box key={index} sx={{ mb: 2 }}>
+                <Stack direction='row' spacing={2} alignItems='center'>
+                  <TextField
+                    label='Size'
+                    value={size.size}
+                    onChange={(e) =>
+                      handleSizeChange(index, 'size', e.target.value)
+                    }
+                    required
+                    sx={{ flex: 1 }}
+                  />
+                  <TextField
+                    label='Price'
+                    value={size.price}
+                    onChange={(e) =>
+                      handleSizeChange(index, 'price', e.target.value)
+                    }
+                    required
+                    sx={{ flex: 1 }}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position='start'>₹</InputAdornment>
+                      ),
+                    }}
+                  />
+                  <IconButton
+                    onClick={() => removeSize(index)}
+                    disabled={formData.sizes.length === 1}
+                    color='error'
+                  >
+                    <DeleteOutlineIcon />
+                  </IconButton>
+                </Stack>
+              </Box>
+            ))}
+            <Button
+              startIcon={<AddCircleOutlineIcon />}
+              onClick={addSize}
+              variant='outlined'
+              sx={{ mt: 1 }}
+            >
+              Add Size
+            </Button>
+          </Grid>
+
           <Grid item xs={12} md={6}>
             <TextField
               fullWidth
-              label="Price"
+              label='Price'
               value={formData.price}
-              onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, price: e.target.value })
+              }
               required
               InputProps={{
-                startAdornment: <InputAdornment position="start">₹</InputAdornment>,
+                startAdornment: (
+                  <InputAdornment position='start'>₹</InputAdornment>
+                ),
               }}
             />
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          {/* <Grid item xs={12} md={6}>
             <TextField
               fullWidth
               label="Original Price"
@@ -195,9 +278,9 @@ export default function NewProductPage() {
                 startAdornment: <InputAdornment position="start">₹</InputAdornment>,
               }}
             />
-          </Grid>
+          </Grid> */}
 
-          <Grid item xs={12} md={6}>
+          {/* <Grid item xs={12} md={6}>
             <TextField
               fullWidth
               label="Discount (%)"
@@ -207,15 +290,17 @@ export default function NewProductPage() {
               type="number"
               inputProps={{ min: 0, max: 100 }}
             />
-          </Grid>
+          </Grid> */}
 
           <Grid item xs={12} md={6}>
             <TextField
               fullWidth
-              label="Stock"
-              type="number"
+              label='Stock'
+              type='number'
               value={formData.stock}
-              onChange={(e) => setFormData({ ...formData, stock: parseInt(e.target.value) })}
+              onChange={(e) =>
+                setFormData({ ...formData, stock: parseInt(e.target.value) })
+              }
               required
               inputProps={{ min: 0 }}
             />
@@ -224,9 +309,11 @@ export default function NewProductPage() {
           <Grid item xs={12}>
             <TextField
               fullWidth
-              label="Description"
+              label='Description'
               value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
               required
               multiline
               rows={4}
@@ -234,60 +321,16 @@ export default function NewProductPage() {
           </Grid>
 
           <Grid item xs={12}>
-            <Typography variant="h6" gutterBottom>
-              Product Sizes
-            </Typography>
-            {formData.sizes.map((size, index) => (
-              <Box key={index} sx={{ mb: 2 }}>
-                <Stack direction="row" spacing={2} alignItems="center">
-                  <TextField
-                    label="Size"
-                    value={size.size}
-                    onChange={(e) => handleSizeChange(index, 'size', e.target.value)}
-                    required
-                    sx={{ flex: 1 }}
-                  />
-                  <TextField
-                    label="Price"
-                    value={size.price}
-                    onChange={(e) => handleSizeChange(index, 'price', e.target.value)}
-                    required
-                    sx={{ flex: 1 }}
-                    InputProps={{
-                      startAdornment: <InputAdornment position="start">₹</InputAdornment>,
-                    }}
-                  />
-                  <IconButton 
-                    onClick={() => removeSize(index)}
-                    disabled={formData.sizes.length === 1}
-                    color="error"
-                  >
-                    <DeleteOutlineIcon />
-                  </IconButton>
-                </Stack>
-              </Box>
-            ))}
             <Button
-              startIcon={<AddCircleOutlineIcon />}
-              onClick={addSize}
-              variant="outlined"
-              sx={{ mt: 1 }}
-            >
-              Add Size
-            </Button>
-          </Grid>
-
-          <Grid item xs={12}>
-            <Button
-              component="label"
-              variant="outlined"
+              component='label'
+              variant='outlined'
               startIcon={<CloudUploadIcon />}
               sx={{ mb: 2 }}
             >
               Upload Image
               <input
-                type="file"
-                accept="image/*"
+                type='file'
+                accept='image/*'
                 onChange={handleImageChange}
                 style={{ display: 'none' }}
                 required={!formData.image}
@@ -297,8 +340,12 @@ export default function NewProductPage() {
               <Box sx={{ mt: 2 }}>
                 <img
                   src={imagePreview}
-                  alt="Preview"
-                  style={{ maxWidth: '200px', maxHeight: '200px', objectFit: 'contain' }}
+                  alt='Preview'
+                  style={{
+                    maxWidth: '200px',
+                    maxHeight: '200px',
+                    objectFit: 'contain',
+                  }}
                 />
               </Box>
             )}
@@ -306,10 +353,10 @@ export default function NewProductPage() {
 
           <Grid item xs={12}>
             <Button
-              type="submit"
-              variant="contained"
+              type='submit'
+              variant='contained'
               disabled={loading}
-              sx={{ 
+              sx={{
                 minWidth: 200,
                 bgcolor: 'primary.main',
                 '&:hover': {

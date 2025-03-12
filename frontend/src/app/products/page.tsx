@@ -1,12 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
 import ProductPreviewModal from '@/components/ProductPreviewModal';
 import { CartItem } from '@/types/cart';
 import { useCart } from '@/context/CartContext';
 import { useRouter } from 'next/navigation';
 import api from '@/utils/api'; // Import our API utility
+import ProductCard from '@/components/ProductCard';
 
 interface ProductImage {
   public_id: string;
@@ -102,84 +102,12 @@ export default function ProductsPage() {
 
         <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8'>
           {products.map((product) => (
-            <div
-              key={product._id}
-              className='group bg-white rounded-2xl shadow-md hover:shadow-xl overflow-hidden transition-all duration-300 hover:scale-102 cursor-pointer'
+            <div 
+              key={product._id} 
               onClick={() => setSelectedProduct(product)}
+              className="cursor-pointer"
             >
-              {/* Product card content */}
-              <div className='relative h-56 w-full overflow-hidden'>
-                <Image
-                  src={product.image?.url || '/placeholder-product.jpg'}
-                  alt={product.title}
-                  fill
-                  className='object-cover group-hover:scale-110 transition-transform duration-300'
-                  sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
-                  priority={false}
-                />
-                {product.discount && product.discount !== '0%' && (
-                  <div className='absolute top-3 right-3 bg-red-500 text-white px-3 py-1.5 rounded-full text-sm font-semibold shadow-lg transform -rotate-12'>
-                    {product.discount} OFF
-                  </div>
-                )}
-              </div>
-
-              <div className='p-5'>
-                <h3 className='text-xl font-bold mb-2 line-clamp-1 text-gray-800'>
-                  {product.title}
-                </h3>
-                <p className='text-gray-600 text-sm mb-3 line-clamp-2'>
-                  {product.description}
-                </p>
-
-                <div className='flex items-center justify-between mb-4'>
-                  <div className='flex flex-col'>
-                    <span className='text-2xl font-bold text-green-600'>
-                      ₹{product.price}
-                    </span>
-                    {product.originalPrice !== product.price && (
-                      <span className='text-sm text-gray-500 line-through'>
-                        ₹{product.originalPrice}
-                      </span>
-                    )}
-                  </div>
-                  {product.stock > 0 ? (
-                    <span className='px-3 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full'>
-                      In Stock
-                    </span>
-                  ) : (
-                    <span className='px-3 py-1 bg-red-100 text-red-700 text-sm font-medium rounded-full'>
-                      Out of Stock
-                    </span>
-                  )}
-                </div>
-
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleAddToCart({
-                      productId: product._id,
-                      title: product.title,
-                      price: product.price,
-                      quantity: 1,
-                      image: product.image.url,
-                      size: product.sizes[0]?.size || 'default',
-                    });
-                  }}
-                  className='w-full py-3 px-4 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-xl font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:transform-none'
-                  disabled={product.stock <= 0}
-                >
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    className='h-5 w-5'
-                    viewBox='0 0 20 20'
-                    fill='currentColor'
-                  >
-                    <path d='M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z' />
-                  </svg>
-                  {product.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
-                </button>
-              </div>
+              <ProductCard product={product} />
             </div>
           ))}
         </div>
